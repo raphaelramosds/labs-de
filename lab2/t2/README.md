@@ -3,7 +3,7 @@
 ## Como executar
 
 ```bash
-ls data | python3 mapper.py | python3 reducer.py
+ls samples | python3 mapper.py | python3 reducer.py
 ```
 
 ## Estratégia do MapReduce
