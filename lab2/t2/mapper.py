@@ -32,7 +32,6 @@ for filename in sys.stdin:
 
     # Abrir stream de leitura do arquivo CSV
     with open(f'{SAMPLES_DIR}/{filename}', newline='', encoding=ENCODING) as file:
-
         # Abrir leitor do CSV
         reader = csv.reader(file, delimiter=DELIMITER)
         city = None
