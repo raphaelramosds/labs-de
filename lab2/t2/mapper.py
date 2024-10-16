@@ -1,35 +1,52 @@
-# Lab 02 - MapReduce com Hadoop - Tarefa 2
-# Componentes
-#   Raphael Ramos
-#   Emanoel Batista
+# ██████╗  ██████╗ █████╗
+# ██╔══██╗██╔════╝██╔══██╗
+# ██║  ██║██║     ███████║
+# ██║  ██║██║     ██╔══██║
+# ██████╔╝╚██████╗██║  ██║
+# ╚═════╝  ╚═════╝╚═╝  ╚═╝ UFRN 2024
+#
+# RAPHAEL RAMOS
+# raphael.ramos.102 '@' ufrn.br
+#
+# EMANOEL BATISTA
+# emanoel.batista.104 '@' ufrn.br
+# ----------------------------------------------- 
+#
+# SCRIPT: MAPPER (python3)
 
+#!/usr/bin/env python
 import sys
 import csv
 import re
 
+# Constantes para leitura do arquivo
 ENCODING = 'ISO-8859-1'
 DELIMITER = ';'
+SAMPLES_DIR = 'samples'
+TEMP_COLUMN = 'TEMPERATURA DO AR - BULBO SECO, HORARIA (°C)'
 
+# Iterar nas linhas do list directory (ls)
 for filename in sys.stdin:
-    # TODO Mapper vai retornar no stdout (Key: Nome da cidade) (Value: Temperatura)
-    # TODO Reducer recebe no stdin e retorna no  stdout Key MÉDIA(Value)
+    # Recuperar nome do arquivo csv ignorando caractere de nova linha
     filename = re.sub('\n', '', filename)
-    with open(f'samples/{filename}', newline='', encoding=ENCODING) as file:
+
+    # Abrir stream de leitura do arquivo CSV
+    with open(f'{SAMPLES_DIR}/{filename}', newline='', encoding=ENCODING) as file:
 
         # Abrir leitor do CSV
         reader = csv.reader(file, delimiter=DELIMITER)
-        state = None
+        city = None
         header = None
 
         # Recuperar nome da cidade e pular o cabeçalho
         for row in reader:
             header = row
-            state = row[1] if row[0] == 'ESTACAO:' else state
+            city = row[1] if row[0] == 'ESTACAO:' else city
             if len(row) != 2:
                 break
 
         # Recuperar numero da coluna da temperatura desejada
-        temp_index = header.index('TEMPERATURA DO AR - BULBO SECO, HORARIA (°C)')
+        temp_index = header.index(TEMP_COLUMN)
 
         # Posicionar ponteiro na linha onde comeca os dados
         next(reader)
@@ -46,5 +63,5 @@ for filename in sys.stdin:
             temp = temp.replace(',','.')
 
             # Imprime no stdout a cidade e a temperatura no timestamp
-            print(f'{state} {temp}')
+            print(f'{city} {temp}')
         
