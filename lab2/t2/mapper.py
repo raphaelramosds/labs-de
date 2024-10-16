@@ -24,6 +24,7 @@ ENCODING = 'ISO-8859-1'
 DELIMITER = ';'
 SAMPLES_DIR = 'samples'
 TEMP_COLUMN = 'TEMPERATURA DO AR - BULBO SECO, HORARIA (°C)'
+CITY_COLUMN = 'ESTACAO:'
 
 # Iterar nas linhas do list directory (ls)
 for filename in sys.stdin:
@@ -40,7 +41,7 @@ for filename in sys.stdin:
         # Recuperar nome da cidade e pular o cabeçalho
         for row in reader:
             header = row
-            city = row[1] if row[0] == 'ESTACAO:' else city
+            city = row[1] if row[0] == CITY_COLUMN else city
             if len(row) != 2:
                 break
 
