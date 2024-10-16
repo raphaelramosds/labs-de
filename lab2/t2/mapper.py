@@ -55,8 +55,9 @@ for filename in sys.stdin:
             # Recuperar temperatura
             temp = row[temp_index]
 
-            # Substituir temperaturas invalidas por zero
-            temp = temp if re.fullmatch(r'\d+(,\d+)*', temp) else '0.0'
+            # Ignorar temperaturas invalidas
+            if not re.fullmatch(r'\d+(,\d+)*', temp):
+                continue
 
             # Substituir virgula por ponto
             temp = temp.replace(',','.')
