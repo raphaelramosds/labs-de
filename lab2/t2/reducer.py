@@ -32,7 +32,7 @@ for line in sys.stdin:
     city = match.group(1).strip()
     temp = match.group(3)
 
-    # Calcular média
+    # Adicionar temperatura desta cidade
     city_temp[city].append(float(temp))
 
 # Calcular e imprimir a média para cada cidade
