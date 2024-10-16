@@ -1,0 +1,50 @@
+# Serviços que serão executados nos containers
+services: 
+
+  # Nome do serviço a ser criado
+  servidor:
+    # Nome do container que será executado
+    container_name: servidor
+
+    # Imagem que será executada no container
+    # A imagem é obtida localmente ou a partir do Dockerhub
+    # image: <nome-do-usuario-dockerhub>/<nome-do-repositorio:tag>
+    image: raphaelrdsa/engdados:servidortcp
+
+    # Permite a exibição de texto na tela do terminal
+    tty: true
+
+    ports:
+        - 81:30000
+
+  # Nome do segundo serviço a ser criado
+  cliente: 
+    container_name: cliente
+    # O depends_on faz com que este serviço seja executado após outro
+    depends_on:
+      - servidor
+    image: raphaelrdsa/engdados:clientetcp
+    tty: true
+    # Quando o container terminar a sua execução, sempre irá reiniciar
+    restart: always
+    # Passar endereço do servidor para o entrypoint
+    command: servidor
+
+  # Nome do terceiro serviço a ser criado
+  cliente2: 
+    container_name: cliente2
+    depends_on:
+      - servidor
+    image: raphaelrdsa/engdados:clientetcp
+    tty: true
+    restart: always
+    # Passar endereço do servidor para o entrypoint
+    command: servidor
+
+networks:
+  minha-rede:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24
