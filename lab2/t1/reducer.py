@@ -1,8 +1,20 @@
-# Lab 02 - MapReduce com Hadoop - Tarefa 1
-# Componentes
-#   Raphael Ramos
-#   Emanoel Batista
+# ██████╗  ██████╗ █████╗
+# ██╔══██╗██╔════╝██╔══██╗
+# ██║  ██║██║     ███████║
+# ██║  ██║██║     ██╔══██║
+# ██████╔╝╚██████╗██║  ██║
+# ╚═════╝  ╚═════╝╚═╝  ╚═╝ UFRN 2024
+#
+# RAPHAEL RAMOS
+# raphael.ramos.102 '@' ufrn.br
+#
+# EMANOEL BATISTA
+# emanoel.batista.104 '@' ufrn.br
+# ----------------------------------------------- 
+#
+# SCRIPT: REDUCER (python3)
 
+#!/usr/bin/env python
 import sys
 from collections import defaultdict
 
