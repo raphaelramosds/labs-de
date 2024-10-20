@@ -1,4 +1,4 @@
-# Lab 02 - MapReduce com Hadoop
+# Lab 2 - MapReduce com Hadoop
 
 # Tarefa 1 (T1)
 
