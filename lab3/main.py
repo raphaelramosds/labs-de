@@ -12,7 +12,7 @@
 # emanoel.batista.104 '@' ufrn.br
 # ----------------------------------------------- 
 #
-from pyspark.sql import SparkSession, Row
+from pyspark.sql import SparkSession
 
 # Cria uma sessão Spark
 spark = SparkSession.builder.appName("Frequencia de cargos").getOrCreate()
@@ -29,8 +29,8 @@ lines = sc.textFile('conjunto2.csv') \
     # 2. Ignora as linhas onde o nome começa com um hífen.
     # 3. Garante que a segunda coluna (ocupação) tenha conteúdo.
 
-# Mapeia as linhas filtradas para um RDD de Rows, contendo o nome da função e o nome da pessoa, e elimina duplicatas
-job_name = lines.map(lambda p: Row(job = p[1], name = p[0])).distinct()
+# Mapeia as linhas filtradas para tuplas, contendo o nome da função e o nome da pessoa, e elimina duplicatas
+job_name = lines.map(lambda p: (p[1], p[0])).distinct()
 
 # Agrupa os nomes por função e conta quantas pessoas estão associadas a cada função
 role_count = job_name.groupByKey().mapValues(len)
