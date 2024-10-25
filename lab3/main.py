@@ -26,7 +26,7 @@ lines = sc.textFile('conjunto2.csv') \
     .map(lambda l : l.split(';')) \
     .filter(lambda l : not re.search(r'\bNOME\b|--+', l[0]) and len(l[1]) > 0)
     # Filtra as linhas: 
-    # 1. Ignora as linhas do cabeçalho: primeira coluna contém NOME ou mais de um traço
+    # 1. Ignora as linhas do cabeçalho: primeira coluna contém NOME ou dois ou mais traços
     # 2. Ignora funcionarios que não tem cargo
 
 # Mapeia as linhas filtradas para tuplas, contendo o nome da função e o nome da pessoa, e elimina duplicatas
