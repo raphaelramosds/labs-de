@@ -82,7 +82,7 @@ print("Frequência de alunos do sexo masculino (M) e do sexo feminino (F)")
 df.groupBy("sexo").count().show()
 
 print("Top 5 dos cursos que mais receberam alunos")
-df = df.filter(df.nome_curso.isNotNull())
+df = df.filter(df.nome_curso != '')
 df.groupBy("nome_curso").count().orderBy(desc("count")).limit(5).show()
 
 print("Quantidade de alunos do sexo feminino que ingressaram via SISU em PEDAGOGIA")
