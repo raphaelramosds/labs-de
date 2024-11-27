@@ -12,10 +12,11 @@
 # emanoel.batista.104 '@' ufrn.br
 # -----------------------------------------------
 #
-import pymongo
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, OperationFailure
+
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import desc
 
 # Definir JAVA_HOME para o pyspark funcionar
 import os
@@ -38,7 +39,7 @@ students = db.students
 students.create_index('matricula', unique=True)
 
 # Iniciar sessão do spark
-spark = SparkSession.builder.appName("Spark").getOrCreate()
+spark = SparkSession.builder.appName("Lab 5 - MongoDB com Spark").getOrCreate()
 sc = spark.sparkContext
 
 # Recuperar todas as linhas do conjunto de dados
@@ -66,12 +67,26 @@ with client.start_session() as session:
     # Caso tente inserir linha repetida, aborte a inserção
     except (ConnectionFailure, OperationFailure) as e:
         session.abort_transaction()
-        print(f"Algo deu errado na inserção do registro: {e}")
 
-# Listar todos os alunos que ingressaram por meio do SiSU
+# Recuperar registros do banco ignorando a coluna _id pois o spark dataframe não consegue inferir seu tipo diretamente
+data = [ { k : v for k, v in doc.items() if k != "_id" } for doc in students.find() ]
 
-# Computar quantos alunos são do sexo masculino e do sexo feminino
+# Colocar registros em um Dataframe
+df = spark.createDataFrame(data)
 
-# Computar o top 5 dos cursos que mais receberam alunos
+# Consultas aos dados
+print("Listagem de todos os alunos que ingressaram por meio do SiSU")
+df.filter(df.forma_ingresso == "SiSU").show()
 
-# Realizar consulta múltipla ("relacional"), por exemplo: quantos alunos são do sexo masculino que ingressaram via SiSU em algum curso em específico
+print("Frequência de alunos do sexo masculino (M) e do sexo feminino (F)")
+df.groupBy("sexo").count().show()
+
+print("Top 5 dos cursos que mais receberam alunos")
+df = df.filter(df.nome_curso.isNotNull())
+df.groupBy("nome_curso").count().orderBy(desc("count")).limit(5).show()
+
+print("Quantidade de alunos do sexo feminino que ingressaram via SISU em PEDAGOGIA")
+print(df.filter((df.sexo == 'F') & (df.forma_ingresso == 'SiSU') & (df.nome_curso == 'PEDAGOGIA')).count())
+
+# Encerrar sessão spark
+spark.stop()
