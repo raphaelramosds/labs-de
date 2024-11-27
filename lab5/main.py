@@ -51,13 +51,13 @@ lines = tags.map(lambda line: line.replace('"', '').split(';'))
 # Recuperar colunas
 columns = lines.first()
 
-# Ignorar cabeçalho e tranformar linhas do CSV em listas
+# Remover cabeçalho
 lines = lines.filter(lambda line: line != columns)
 
 # Construa as linhas como objetos cujas chaves são as colunas
 rows = [dict(zip(columns, line)) for line in lines.collect()]
 
-# Abrir transaction para inserir todas as linhas
+# Abrir transaction para inserir todas as linhas no MongoDB
 with client.start_session() as session:
     try:
         session.start_transaction()
