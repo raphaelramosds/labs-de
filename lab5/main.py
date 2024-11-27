@@ -68,4 +68,10 @@ with client.start_session() as session:
         session.abort_transaction()
         print(f"Algo deu errado na inserção do registro: {e}")
 
-print('Termino do programa')
+# Listar todos os alunos que ingressaram por meio do SiSU
+
+# Computar quantos alunos são do sexo masculino e do sexo feminino
+
+# Computar o top 5 dos cursos que mais receberam alunos
+
+# Realizar consulta múltipla ("relacional"), por exemplo: quantos alunos são do sexo masculino que ingressaram via SiSU em algum curso em específico
