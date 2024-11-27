@@ -12,7 +12,9 @@
 # emanoel.batista.104 '@' ufrn.br
 # -----------------------------------------------
 #
+import pymongo
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, OperationFailure
 from pyspark.sql import SparkSession
 
 # Definir JAVA_HOME para o pyspark funcionar
@@ -32,25 +34,38 @@ client = MongoClient(mongo_uri)
 db = client[mongo_db]
 students = db.students
 
+# Colocar restrição de unicidade na coluna matricula
+students.create_index('matricula', unique=True)
+
 # Iniciar sessão do spark
 spark = SparkSession.builder.appName("Spark").getOrCreate()
 sc = spark.sparkContext
 
-# Recuperar todas as tags do conjunto de dados
+# Recuperar todas as linhas do conjunto de dados
 tags = sc.textFile('discentes-2024.csv')
 
-# Ignorar cabeçalho e tranformar linhas do CSV em listas
-str_header = tags.first()
-rdd_header = sc.parallelize([str_header])
-lines = tags.subtract(rdd_header).map(lambda l : l.split(';'))
+# Ler CSV com delimitador ; (ponto e vírgula) e quote " (aspas duplas)
+lines = tags.map(lambda line: line.replace('"', '').split(';'))
 
-# Salvar colunas do cabeçalho
-columns = str_header.split(';')
+# Recuperar colunas
+columns = lines.first()
+
+# Ignorar cabeçalho e tranformar linhas do CSV em listas
+lines = lines.filter(lambda line: line != columns)
 
 # Construa as linhas como objetos cujas chaves são as colunas
 rows = [dict(zip(columns, line)) for line in lines.collect()]
 
-# Abrir transaction para inserir cada uma das linhas
+# Abrir transaction para inserir todas as linhas
+with client.start_session() as session:
+    try:
+        session.start_transaction()
+        students.insert_many(rows)
+        session.commit_transaction()
+        print(f"{len(rows)} registros inseridos com sucesso.")
+    # Caso tente inserir linha repetida, aborte a inserção
+    except (ConnectionFailure, OperationFailure) as e:
+        session.abort_transaction()
+        print(f"Algo deu errado na inserção do registro: {e}")
 
-# ingressante_id = ingressantes.insert_one({ "name":"Raphael Ramos", "age":19 }).inserted_id
-
+print('Termino do programa')
